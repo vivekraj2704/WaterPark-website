@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import StripeProvider from './components/payment/StripeProvider';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
@@ -25,36 +26,38 @@ import NotFoundPage from './pages/NotFoundPage';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Toaster position="top-center" />
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="rides" element={<RidesPage />} />
-            <Route path="rides/:id" element={<RideDetailPage />} />
-            <Route path="food" element={<FoodPage />} />
-            <Route path="checkout" element={<CheckoutPage />} />
-            <Route path="signin" element={<SignInPage />} />
-            <Route path="signup" element={<SignUpPage />} />
-          </Route>
-          
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<UserDashboardPage />} />
-            <Route path="bookings" element={<BookingsPage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-          </Route>
-          
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
+      <StripeProvider>
+        <Router>
+          <Toaster position="top-center" />
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="rides" element={<RidesPage />} />
+              <Route path="rides/:id" element={<RideDetailPage />} />
+              <Route path="food" element={<FoodPage />} />
+              <Route path="checkout" element={<CheckoutPage />} />
+              <Route path="signin" element={<SignInPage />} />
+              <Route path="signup" element={<SignUpPage />} />
+            </Route>
+            
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<UserDashboardPage />} />
+              <Route path="bookings" element={<BookingsPage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+            </Route>
+            
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Router>
+      </StripeProvider>
     </AuthProvider>
   );
 }

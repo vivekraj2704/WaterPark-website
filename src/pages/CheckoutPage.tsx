@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import StripePaymentForm from '../components/payment/StripePaymentForm';
 
 const CheckoutPage: React.FC = () => {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
@@ -28,37 +29,7 @@ const CheckoutPage: React.FC = () => {
     toast.success('Item removed from cart');
   };
 
-  const handleProcessPayment = async () => {
-    if (!user) {
-      toast.error('Please sign in to complete your purchase');
-      navigate('/signin');
-      return;
-    }
-
-    try {
-      setIsProcessingPayment(true);
-      
-      // Here we would typically integrate with Stripe Payment Intent API
-      // For demo purposes, we'll just simulate a payment process
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // After successful payment, process the order
-      await handleCheckout();
-      
-      setIsProcessingPayment(false);
-    } catch (error) {
-      console.error('Payment processing error:', error);
-      toast.error('Payment processing failed. Please try again.');
-      setIsProcessingPayment(false);
-    }
-  };
-
-  const handleCheckout = async () => {
-    if (items.length === 0) {
-      toast.error('Your cart is empty');
-      return;
-    }
-
+  const handlePaymentSuccess = async (paymentId: string) => {
     try {
       setLoading(true);
 
@@ -77,7 +48,7 @@ const CheckoutPage: React.FC = () => {
           rides: formattedRides,
           totalAmount: rideTotal,
           paymentMethod,
-          paymentId: 'stripe_simulated_' + Date.now()
+          paymentId
         });
       }
 
@@ -95,19 +66,24 @@ const CheckoutPage: React.FC = () => {
           items: formattedFoodItems,
           totalAmount: foodTotal,
           paymentMethod,
-          paymentId: 'stripe_simulated_' + Date.now()
+          paymentId
         });
       }
 
-      toast.success('Your order has been placed successfully!');
       clearCart();
+      toast.success('Order placed successfully!');
       navigate('/dashboard');
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error('Failed to process your order. Please try again.');
+      toast.error('Failed to process order. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePaymentError = (error: Error) => {
+    console.error('Payment error:', error);
+    toast.error('Payment failed. Please try again.');
   };
 
   // If cart is empty
@@ -142,6 +118,23 @@ const CheckoutPage: React.FC = () => {
               </motion.button>
             </div>
           </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Please Sign In</h2>
+          <p className="mb-4">You need to be signed in to complete your purchase.</p>
+          <button
+            onClick={() => navigate('/signin')}
+            className="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700"
+          >
+            Sign In
+          </button>
         </div>
       </div>
     );
@@ -293,7 +286,7 @@ const CheckoutPage: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Order Summary */}
+          {/* Payment Section */}
           <div className="lg:col-span-1">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -302,104 +295,12 @@ const CheckoutPage: React.FC = () => {
               className="bg-white rounded-xl shadow-md overflow-hidden sticky top-24"
             >
               <div className="p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-                
-                <div className="space-y-4 mb-6">
-                  {rideItems.length > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Rides Subtotal</span>
-                      <span className="font-medium">
-                        ${rideItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {foodItems.length > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Food Subtotal</span>
-                      <span className="font-medium">
-                        ${foodItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="border-t pt-4 flex justify-between font-bold">
-                    <span>Total</span>
-                    <span className="text-primary-600">${totalPrice.toFixed(2)}</span>
-                  </div>
-                </div>
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Payment Method</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2 p-3 border rounded-md cursor-pointer bg-gray-50">
-                      <input 
-                        type="radio" 
-                        name="paymentMethod" 
-                        value="Credit Card"
-                        checked={paymentMethod === 'Credit Card'} 
-                        onChange={() => setPaymentMethod('Credit Card')}
-                        className="h-4 w-4 text-primary-600"
-                      />
-                      <CreditCard size={20} className="text-primary-600" />
-                      <span>Credit Card</span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="bg-blue-50 p-4 rounded-md mb-6 flex items-start">
-                  <Info size={20} className="text-primary-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-blue-800">
-                    This is a demo implementation. In a real application, this would integrate with Stripe for secure payment processing.
-                  </p>
-                </div>
-                
-                {user ? (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleProcessPayment}
-                    disabled={loading || isProcessingPayment}
-                    className={`w-full bg-primary-600 text-white py-3 px-4 rounded-md font-medium transition-colors ${
-                      loading || isProcessingPayment ? 'opacity-70 cursor-not-allowed' : 'hover:bg-primary-700'
-                    }`}
-                  >
-                    {isProcessingPayment ? (
-                      <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing Payment...
-                      </span>
-                    ) : loading ? (
-                      'Processing Order...'
-                    ) : (
-                      'Complete Purchase'
-                    )}
-                  </motion.button>
-                ) : (
-                  <div className="space-y-3">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => navigate('/signin')}
-                      className="w-full bg-primary-600 text-white py-3 px-4 rounded-md font-medium hover:bg-primary-700 transition-colors"
-                    >
-                      Sign In to Continue
-                    </motion.button>
-                    <p className="text-sm text-gray-600 text-center">
-                      You need to be signed in to complete your purchase
-                    </p>
-                  </div>
-                )}
-                
-                <button
-                  onClick={() => navigate(-1)}
-                  className="w-full mt-4 text-primary-600 py-2 px-4 rounded-md font-medium hover:bg-primary-50 transition-colors text-center"
-                >
-                  Continue Shopping
-                </button>
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Details</h2>
+                <StripePaymentForm
+                  amount={totalPrice}
+                  onSuccess={handlePaymentSuccess}
+                  onError={handlePaymentError}
+                />
               </div>
             </motion.div>
           </div>

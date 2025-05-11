@@ -2,6 +2,8 @@ import express from 'express';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import { protect } from '../middleware/auth.js';
+import Booking from '../models/Booking.js';
+import Order from '../models/Order.js';
 
 dotenv.config();
 
@@ -55,31 +57,102 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET || 'whsec_dummy_key'
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
   
-  // Handle the event
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntent = event.data.object;
-      console.log('Payment succeeded:', paymentIntent.id);
-      // Update booking or order status here
-      break;
-    case 'payment_intent.payment_failed':
-      const failedPayment = event.data.object;
-      console.log('Payment failed:', failedPayment.id);
-      // Handle failed payment
-      break;
-    default:
-      console.log(`Unhandled event type: ${event.type}`);
+  try {
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object;
+        const { userId } = paymentIntent.metadata;
+        
+        // Update all pending bookings and orders for this user
+        await Promise.all([
+          Booking.updateMany(
+            { 
+              user: userId,
+              paymentId: paymentIntent.id,
+              paymentStatus: 'Pending'
+            },
+            { 
+              $set: { 
+                paymentStatus: 'Completed',
+                status: 'Confirmed'
+              }
+            }
+          ),
+          Order.updateMany(
+            { 
+              user: userId,
+              paymentId: paymentIntent.id,
+              paymentStatus: 'Pending'
+            },
+            { 
+              $set: { 
+                paymentStatus: 'Completed',
+                status: 'Preparing'
+              }
+            }
+          )
+        ]);
+        
+        console.log('Payment succeeded and orders updated:', paymentIntent.id);
+        break;
+      }
+      
+      case 'payment_intent.payment_failed': {
+        const paymentIntent = event.data.object;
+        const { userId } = paymentIntent.metadata;
+        
+        // Update all pending bookings and orders for this user
+        await Promise.all([
+          Booking.updateMany(
+            { 
+              user: userId,
+              paymentId: paymentIntent.id,
+              paymentStatus: 'Pending'
+            },
+            { 
+              $set: { 
+                paymentStatus: 'Failed',
+                status: 'Cancelled'
+              }
+            }
+          ),
+          Order.updateMany(
+            { 
+              user: userId,
+              paymentId: paymentIntent.id,
+              paymentStatus: 'Pending'
+            },
+            { 
+              $set: { 
+                paymentStatus: 'Failed',
+                status: 'Cancelled'
+              }
+            }
+          )
+        ]);
+        
+        console.log('Payment failed and orders updated:', paymentIntent.id);
+        break;
+      }
+      
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+    
+    // Return a response to acknowledge receipt of the event
+    res.json({ received: true });
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    res.status(500).json({ error: 'Webhook handler failed' });
   }
-  
-  // Return a response to acknowledge receipt of the event
-  res.json({ received: true });
 });
 
 export default router;

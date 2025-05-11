@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
-import userRoutes from './routes/users.js';
+// import userRoutes from './routes/users.js';
 import rideRoutes from './routes/rides.js';
 import foodRoutes from './routes/food.js';
 import bookingRoutes from './routes/bookings.js';
@@ -28,7 +28,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+// app.use('/api/users', userRoutes);
 app.use('/api/rides', rideRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/bookings', bookingRoutes);

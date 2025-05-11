@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || isOpen
           ? 'bg-white shadow-md text-gray-800'
-          : 'bg-transparent text-white'
+          : 'bg-transparent text-gray-400'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

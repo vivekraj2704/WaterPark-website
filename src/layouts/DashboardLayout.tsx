@@ -84,7 +84,7 @@ const DashboardLayout: React.FC = () => {
                 <path d="M22 10c.7 1.2.7 2.8 0 4a5.8 5.8 0 0 1-3 3.5c-1.3.6-2.7.6-4 0a5.8 5.8 0 0 1-3-3.5c-.7-1.2-.7-2.8 0-4 .6-1 1.7-1.8 3-2.2 1.3-.4 2.7-.4 4 0 1.3.4 2.4 1.2 3 2.2Z"></path>
                 <circle cx="18" cy="12" r="1"></circle>
               </svg>
-              <span className="text-primary-600 font-medium">Splash Adventure</span>
+              <span className="text-primary-600 font-medium">AquaSplash</span>
             </Link>
             <button 
               onClick={closeSidebar}

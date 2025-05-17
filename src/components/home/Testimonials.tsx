@@ -17,7 +17,7 @@ const Testimonials: React.FC = () => {
       name: 'Sarah Johnson',
       avatar: 'https://images.pexels.com/photos/3992656/pexels-photo-3992656.png?auto=compress&cs=tinysrgb&w=600',
       rating: 5,
-      text: 'Our family had the best day ever at Splash Adventure! The kids couldn\'t get enough of the water slides, and the staff was incredibly friendly. We\'ll definitely be coming back next summer!'
+      text: 'Our family had the best day ever at AquaSplash! The kids couldn\'t get enough of the water slides, and the staff was incredibly friendly. We\'ll definitely be coming back next summer!'
     },
     {
       id: 2,
@@ -54,7 +54,7 @@ const Testimonials: React.FC = () => {
             What Our Visitors Say
           </h2>
           <p className="mt-4 text-xl text-primary-200 max-w-3xl mx-auto">
-            Don't just take our word for it. Hear from families who have experienced the magic of Splash Adventure.
+            Don't just take our word for it. Hear from families who have experienced the magic of AquaSplash.
           </p>
         </div>
 

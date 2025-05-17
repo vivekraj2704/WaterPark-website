@@ -52,7 +52,7 @@ const SignUpPage: React.FC = () => {
             Create Your Account
           </h1>
           <p className="mt-2 text-gray-600">
-            Join Splash Adventure for exclusive offers
+            Join AquaSplash for exclusive offers
           </p>
         </div>
 

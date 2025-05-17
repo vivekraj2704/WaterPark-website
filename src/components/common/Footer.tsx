@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
                 <path d="M22 10c.7 1.2.7 2.8 0 4a5.8 5.8 0 0 1-3 3.5c-1.3.6-2.7.6-4 0a5.8 5.8 0 0 1-3-3.5c-.7-1.2-.7-2.8 0-4 .6-1 1.7-1.8 3-2.2 1.3-.4 2.7-.4 4 0 1.3.4 2.4 1.2 3 2.2Z"></path>
                 <circle cx="18" cy="12" r="1"></circle>
               </svg>
-              <span className="font-display text-xl font-semibold">Splash Adventure</span>
+              <span className="font-display text-xl font-semibold">AquaSplash</span>
             </Link>
             <p className="text-gray-300">
               The ultimate water park experience for the whole family. Enjoy thrilling rides, delicious food, and create unforgettable memories.
@@ -118,7 +118,7 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-primary-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400">
-            &copy; {new Date().getFullYear()} Splash Adventure Water Park. All rights reserved.
+            &copy; {new Date().getFullYear()} AquaSplash Water Park. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 space-x-4">
             <Link to="/privacy" className="text-gray-400 hover:text-white">

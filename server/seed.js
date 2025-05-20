@@ -9,7 +9,7 @@ const rides = [
   {
     name: 'Tsunami Twister',
     description: 'Experience the ultimate thrill as you spiral through a massive water funnel, featuring a heart-pounding 360-degree loop that will leave you breathless.',
-    image: 'https://images.pexels.com/photos/7541299/pexels-photo-7541299.jpeg',
+    image: 'https://dfsekouzoh96q.cloudfront.net/Adventure_Park_Tsunami_Tornado_Conveyor_07_09_21_5_959214445f.jpg',
     price: 29.99,
     thrillLevel: 'Extreme',
     minHeight: 140,
@@ -19,7 +19,7 @@ const rides = [
   {
     name: 'River Rapids',
     description: 'Navigate through rushing waters and unexpected drops on this exciting river adventure. Perfect for families seeking a balanced mix of thrills and fun.',
-    image: 'https://images.pexels.com/photos/7456112/pexels-photo-7456112.jpeg',
+    image: 'https://images.squarespace-cdn.com/content/v1/616dcd1f2b034d749d32d816/1639752982305-7EV2LJL3CZ8ELGBDAXG8/20190726_MO_RiverRapids_0285.jpg',
     price: 24.99,
     thrillLevel: 'Moderate',
     minHeight: 120,
@@ -39,7 +39,7 @@ const rides = [
   {
     name: 'Aqua Loop',
     description: 'Take on our most intense water slide featuring a vertical loop! Drop through a trap door and experience weightlessness as you complete a perfect loop.',
-    image: 'https://images.pexels.com/photos/7541301/pexels-photo-7541301.jpeg',
+    image: 'https://img.archiexpo.com/images_ae/photo-g/50548-6862995.jpg',
     price: 34.99,
     thrillLevel: 'Extreme',
     minHeight: 150,
@@ -49,7 +49,7 @@ const rides = [
   {
     name: 'Lazy River',
     description: 'Float along our scenic lazy river, winding through beautiful landscapes and gentle waterfalls. Perfect for relaxation and cooling off.',
-    image: 'https://images.pexels.com/photos/7456116/pexels-photo-7456116.jpeg',
+    image: 'https://www.parrotislandwaterpark.com/uploads/DJI_0193-edit.jpg',
     price: 14.99,
     thrillLevel: 'Mild',
     minHeight: 0,
